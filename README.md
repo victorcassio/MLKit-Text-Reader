@@ -35,10 +35,10 @@ cd MLKit-Text-Reader
 npm install
 
 # 4. Iniciar o servidor Metro
-npm start
+npm run start
 
 # 5. Rodar no Android (porta customizada para evitar conflitos)
-npx react-native run-android --port 8088
+npx run android
 
 # (Opcional) Rodar no iOS
 npx pod-install ios
