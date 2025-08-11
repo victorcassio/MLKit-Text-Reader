@@ -43,17 +43,24 @@ npx react-native run-android --port 8088
 # (Opcional) Rodar no iOS
 npx pod-install ios
 npx react-native run-ios
+```
 
-📌 Observações
+---
+
+## 📌 Observações
 É necessário conceder permissão de câmera no dispositivo/emulador.
 
 Para usar ML Kit, certifique-se de ter o Google Play Services atualizado.
 
 Caso ocorra erro de build relacionado ao Ninja ou CMake, instale-os pelo Android Studio → SDK Tools.
 
-📚 Aprendendo mais
+---
+
+## 📚 Aprendendo mais
 Documentação React Native
 
 ML Kit Vision Docs
 
 Vision Camera Docs
+
+---
