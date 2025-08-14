@@ -1,31 +1,44 @@
-import React, { useState } from 'react';
-import { StyleSheet } from "react-native";
-import { useCameraDevice } from 'react-native-vision-camera';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text } from 'react-native';
+import {
+  useCameraDevice,
+  useCameraPermission,
+} from 'react-native-vision-camera';
 import { Camera } from 'react-native-vision-camera-text-recognition';
 
-function App (){
-  const [data,setData] = useState(null)
+function App() {
+  const [data, setData] = useState(null);
   const device = useCameraDevice('back');
-  const { hasPermission } = useCameraPermission()
-  console.log(data)
-  return(
+  const { hasPermission, requestPermission } = useCameraPermission();
+
+  useEffect(() => {
+    if (!hasPermission) {
+      requestPermission();
+    }
+  }, [hasPermission, requestPermission]);
+
+  console.log(data);
+
+  if (!hasPermission) {
+    return <Text>Solicitando permissão de câmera...</Text>;
+  }
+
+  return (
     <>
-      {!!device && (
+      {!!device && hasPermission && (
         <Camera
           style={StyleSheet.absoluteFill}
           device={device}
           isActive
           options={{
-            language: 'pt'
+            language: 'pt',
           }}
           mode={'recognize'}
-          callback={(d) => setData(d)}
+          callback={d => setData(d)}
         />
       )}
     </>
-  )
+  );
 }
 
 export default App;
-
-
