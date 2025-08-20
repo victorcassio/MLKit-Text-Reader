@@ -1,5 +1,5 @@
 apply plugin: "com.android.application"
-// apply plugin: "org.jetbrains.kotlin.android"
+apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 /**
@@ -7,6 +7,9 @@ apply plugin: "com.facebook.react"
  * By default you don't need to apply any configuration, just uncomment the lines you need.
  */
 react {
+
+    nodeExecutableAndArgs = ["/usr/bin/env", "node"]
+
     /* Folders */
     //   The root of your project, i.e. where "package.json" lives. Default is '../..'
     // root = file("../../")
@@ -115,7 +118,6 @@ android {
 
 dependencies {
     implementation("com.facebook.react:react-android")
-    implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.1'
 
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
