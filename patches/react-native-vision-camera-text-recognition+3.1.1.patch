@@ -1,0 +1,1389 @@
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/.classpath b/node_modules/react-native-vision-camera-text-recognition/android/.classpath
+new file mode 100644
+index 0000000..bbe97e5
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/.classpath
+@@ -0,0 +1,6 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<classpath>
++	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-17/"/>
++	<classpathentry kind="con" path="org.eclipse.buildship.core.gradleclasspathcontainer"/>
++	<classpathentry kind="output" path="bin/default"/>
++</classpath>
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/.project b/node_modules/react-native-vision-camera-text-recognition/android/.project
+new file mode 100644
+index 0000000..cc4e740
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/.project
+@@ -0,0 +1,34 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>react-native-vision-camera-text-recognition</name>
++	<comment>Project react-native-vision-camera-text-recognition created by Buildship.</comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.jdt.core.javabuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++		<buildCommand>
++			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.jdt.core.javanature</nature>
++		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
++	</natures>
++	<filteredResources>
++		<filter>
++			<id>1754619073575</id>
++			<name></name>
++			<type>30</type>
++			<matcher>
++				<id>org.eclipse.core.resources.regexFilterMatcher</id>
++				<arguments>node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
++			</matcher>
++		</filter>
++	</filteredResources>
++</projectDescription>
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/.settings/org.eclipse.buildship.core.prefs b/node_modules/react-native-vision-camera-text-recognition/android/.settings/org.eclipse.buildship.core.prefs
+new file mode 100644
+index 0000000..d74648e
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/.settings/org.eclipse.buildship.core.prefs
+@@ -0,0 +1,2 @@
++connection.project.dir=../../../android/app
++eclipse.preferences.version=1
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/.project b/node_modules/react-native-vision-camera-text-recognition/android/bin/.project
+new file mode 100644
+index 0000000..cc4e740
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/.project
+@@ -0,0 +1,34 @@
++<?xml version="1.0" encoding="UTF-8"?>
++<projectDescription>
++	<name>react-native-vision-camera-text-recognition</name>
++	<comment>Project react-native-vision-camera-text-recognition created by Buildship.</comment>
++	<projects>
++	</projects>
++	<buildSpec>
++		<buildCommand>
++			<name>org.eclipse.jdt.core.javabuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++		<buildCommand>
++			<name>org.eclipse.buildship.core.gradleprojectbuilder</name>
++			<arguments>
++			</arguments>
++		</buildCommand>
++	</buildSpec>
++	<natures>
++		<nature>org.eclipse.jdt.core.javanature</nature>
++		<nature>org.eclipse.buildship.core.gradleprojectnature</nature>
++	</natures>
++	<filteredResources>
++		<filter>
++			<id>1754619073575</id>
++			<name></name>
++			<type>30</type>
++			<matcher>
++				<id>org.eclipse.core.resources.regexFilterMatcher</id>
++				<arguments>node_modules|\.git|__CREATED_BY_JAVA_LANGUAGE_SERVER__</arguments>
++			</matcher>
++		</filter>
++	</filteredResources>
++</projectDescription>
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/build.gradle b/node_modules/react-native-vision-camera-text-recognition/android/bin/build.gradle
+new file mode 100644
+index 0000000..c92292a
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/build.gradle
+@@ -0,0 +1,109 @@
++buildscript {
++  // Buildscript is evaluated before everything else so we can't use getExtOrDefault
++  def kotlin_version = rootProject.ext.has("kotlinVersion") ? rootProject.ext.get("kotlinVersion") : project.properties["VisionCameraTextRecognition_kotlinVersion"]
++
++  repositories {
++    google()
++    mavenCentral()
++  }
++
++  dependencies {
++    classpath "com.android.tools.build:gradle:7.2.1"
++    // noinspection DifferentKotlinGradleVersion
++    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
++  }
++}
++
++def isNewArchitectureEnabled() {
++  return rootProject.hasProperty("newArchEnabled") && rootProject.getProperty("newArchEnabled") == "true"
++}
++
++apply plugin: "com.android.library"
++apply plugin: "kotlin-android"
++
++if (isNewArchitectureEnabled()) {
++  apply plugin: "com.facebook.react"
++}
++
++def getExtOrDefault(name) {
++  return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties["VisionCameraTextRecognition_" + name]
++}
++
++def getExtOrIntegerDefault(name) {
++  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["VisionCameraTextRecognition_" + name]).toInteger()
++}
++
++def supportsNamespace() {
++  def parsed = com.android.Version.ANDROID_GRADLE_PLUGIN_VERSION.tokenize('.')
++  def major = parsed[0].toInteger()
++  def minor = parsed[1].toInteger()
++
++  // Namespace support was added in 7.3.0
++  return (major == 7 && minor >= 3) || major >= 8
++}
++
++android {
++  if (supportsNamespace()) {
++    namespace "com.visioncameratextrecognition"
++
++    sourceSets {
++      main {
++        manifest.srcFile "src/main/AndroidManifestNew.xml"
++      }
++    }
++  }
++
++  compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
++
++  defaultConfig {
++    minSdkVersion getExtOrIntegerDefault("minSdkVersion")
++    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
++
++  }
++
++  buildTypes {
++    release {
++      minifyEnabled false
++    }
++  }
++
++  lintOptions {
++    disable "GradleCompatible"
++  }
++
++  compileOptions {
++    sourceCompatibility JavaVersion.VERSION_1_8
++    targetCompatibility JavaVersion.VERSION_1_8
++  }
++}
++
++repositories {
++  mavenCentral()
++  google()
++}
++
++def kotlin_version = getExtOrDefault("kotlinVersion")
++
++dependencies {
++  // For < 0.71, this will be from the local maven repo
++  // For > 0.71, this will be replaced by `com.facebook.react:react-android:$version` by react gradle plugin
++  //noinspection GradleDynamicVersion
++  implementation "com.facebook.react:react-native:+"
++  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-chinese:16.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-devanagari:16.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-japanese:16.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-korean:16.0.1'
++  implementation 'com.google.mlkit:translate:17.0.3'
++  implementation project(':react-native-vision-camera')
++  implementation "androidx.camera:camera-core:1.3.4"
++
++  // For using the models in Google Play Services
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition:19.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-chinese:16.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-devanagari:16.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-japanese:16.0.1'
++  implementation 'com.google.android.gms:play-services-mlkit-text-recognition-korean:16.0.1'
++}
++
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/gradle.properties b/node_modules/react-native-vision-camera-text-recognition/android/bin/gradle.properties
+new file mode 100644
+index 0000000..ff28da9
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/gradle.properties
+@@ -0,0 +1,5 @@
++VisionCameraTextRecognition_kotlinVersion=1.7.0
++VisionCameraTextRecognition_minSdkVersion=21
++VisionCameraTextRecognition_targetSdkVersion=31
++VisionCameraTextRecognition_compileSdkVersion=31
++VisionCameraTextRecognition_ndkversion=21.4.7075529
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/AndroidManifest.xml b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/AndroidManifest.xml
+new file mode 100644
+index 0000000..471837b
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/AndroidManifest.xml
+@@ -0,0 +1,13 @@
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++          package="com.visioncameratextrecognition">
++    <application>
++        <meta-data
++                android:name="com.google.mlkit.vision.DEPENDENCIES"
++                android:value="ocr,ocr_chinese,ocr_devanagari,ocr_japanese,ocr_korean" />
++    </application>
++</manifest>
++
++
++
++
++
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/AndroidManifestNew.xml b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/AndroidManifestNew.xml
+new file mode 100644
+index 0000000..a2f47b6
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/AndroidManifestNew.xml
+@@ -0,0 +1,2 @@
++<manifest xmlns:android="http://schemas.android.com/apk/res/android">
++</manifest>
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/PhotoRecognizerModule.kt b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/PhotoRecognizerModule.kt
+new file mode 100644
+index 0000000..76d0be6
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/PhotoRecognizerModule.kt
+@@ -0,0 +1,50 @@
++package com.visioncameratextrecognition
++
++import android.net.Uri
++import com.facebook.react.bridge.Promise
++import com.facebook.react.bridge.ReactApplicationContext
++import com.facebook.react.bridge.ReactContextBaseJavaModule
++import com.facebook.react.bridge.ReactMethod
++import com.facebook.react.bridge.WritableNativeMap
++import com.google.android.gms.tasks.Task
++import com.google.android.gms.tasks.Tasks
++import com.google.mlkit.vision.common.InputImage
++import com.google.mlkit.vision.text.Text
++import com.google.mlkit.vision.text.TextRecognition
++import com.google.mlkit.vision.text.latin.TextRecognizerOptions
++
++class PhotoRecognizerModule(reactContext: ReactApplicationContext) :
++    ReactContextBaseJavaModule(reactContext) {
++
++   private val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
++
++    @ReactMethod
++    fun process(uri:String,promise:Promise){
++        val parsedUri = Uri.parse(uri)
++        val data = WritableNativeMap()
++        val image = InputImage.fromFilePath(this.reactApplicationContext,parsedUri)
++        val task: Task<Text> = recognizer.process(image)
++        try {
++            val text: Text = Tasks.await(task)
++            if (text.text.isEmpty()) {
++                promise.resolve(WritableNativeMap())
++            }
++            data.putString("resultText", text.text)
++            data.putArray("blocks", VisionCameraTextRecognitionPlugin.getBlocks(text.textBlocks))
++             promise.resolve(data)
++        } catch (e: Exception) {
++            e.printStackTrace()
++           promise.reject("Error", "Error processing image")
++        }
++
++    promise.resolve(true)
++
++    }
++    override fun getName(): String {
++        return NAME
++    }
++    companion object {
++        const val NAME = "PhotoRecognizerModule"
++    }
++}
++
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/RemoveLanguageModel.kt b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/RemoveLanguageModel.kt
+new file mode 100644
+index 0000000..d90bb50
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/RemoveLanguageModel.kt
+@@ -0,0 +1,38 @@
++package com.visioncameratextrecognition
++
++import com.facebook.react.bridge.Promise
++import com.facebook.react.bridge.ReactApplicationContext
++import com.facebook.react.bridge.ReactContextBaseJavaModule
++import com.facebook.react.bridge.ReactMethod
++import com.google.mlkit.common.model.RemoteModelManager
++import com.google.mlkit.nl.translate.TranslateRemoteModel
++
++class RemoveLanguageModel(reactContext: ReactApplicationContext) :
++    ReactContextBaseJavaModule(reactContext) {
++
++    @ReactMethod
++    fun remove(code: String, promise: Promise) {
++        val modelName = translateLanguage(code)?.let { TranslateRemoteModel.Builder(it).build() }
++        if (modelName != null) {
++            modelManager.deleteDownloadedModel(modelName)
++                .addOnSuccessListener {
++                    promise.resolve(true)
++                }
++                .addOnFailureListener {
++                    promise.resolve(false)
++                }
++        } else {
++            promise.resolve(false)
++        }
++    }
++
++    private val modelManager = RemoteModelManager.getInstance()
++    override fun getName(): String {
++        return NAME
++    }
++
++    companion object {
++        const val NAME = "RemoveLanguageModel"
++    }
++
++}
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/TranslateLanguageEnum.kt b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/TranslateLanguageEnum.kt
+new file mode 100644
+index 0000000..37626c8
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/TranslateLanguageEnum.kt
+@@ -0,0 +1,68 @@
++package com.visioncameratextrecognition
++
++import com.google.mlkit.nl.translate.TranslateLanguage.*
++
++fun translateLanguage(language: String): String? {
++    return when (language.lowercase()) {
++        "af" -> AFRIKAANS
++        "ar" -> ARABIC
++        "be" -> BELARUSIAN
++        "bg" -> BULGARIAN
++        "bn" -> BENGALI
++        "ca" -> CATALAN
++        "cs" -> CZECH
++        "cy" -> WELSH
++        "da" -> DANISH
++        "de" -> GERMAN
++        "el" -> GREEK
++        "en" -> ENGLISH
++        "eo" -> ESPERANTO
++        "es" -> SPANISH
++        "et" -> ESTONIAN
++        "fa" -> PERSIAN
++        "fi" -> FINNISH
++        "fr" -> FRENCH
++        "ga" -> IRISH
++        "gl" -> GALICIAN
++        "gu" -> GUJARATI
++        "he" -> HEBREW
++        "hi" -> HINDI
++        "hr" -> CROATIAN
++        "ht" -> HAITIAN_CREOLE
++        "hu" -> HUNGARIAN
++        "id" -> INDONESIAN
++        "is" -> ICELANDIC
++        "it" -> ITALIAN
++        "ja" -> JAPANESE
++        "ka" -> GEORGIAN
++        "kn" -> KANNADA
++        "ko" -> KOREAN
++        "lt" -> LITHUANIAN
++        "lv" -> LATVIAN
++        "mk" -> MACEDONIAN
++        "mr" -> MARATHI
++        "ms" -> MALAY
++        "mt" -> MALTESE
++        "nl" -> DUTCH
++        "no" -> NORWEGIAN
++        "pl" -> POLISH
++        "pt" -> PORTUGUESE
++        "ro" -> ROMANIAN
++        "ru" -> RUSSIAN
++        "sk" -> SLOVAK
++        "sl" -> SLOVENIAN
++        "sq" -> ALBANIAN
++        "sv" -> SWEDISH
++        "sw" -> SWAHILI
++        "ta" -> TAMIL
++        "te" -> TELUGU
++        "th" -> THAI
++        "tl" -> TAGALOG
++        "tr" -> TURKISH
++        "uk" -> UKRAINIAN
++        "ur" -> URDU
++        "vi" -> VIETNAMESE
++        "zh" -> CHINESE
++        else -> null
++    }
++}
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPackage.kt b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPackage.kt
+new file mode 100644
+index 0000000..3016d17
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPackage.kt
+@@ -0,0 +1,32 @@
++package com.visioncameratextrecognition
++
++import com.facebook.react.ReactPackage
++import com.facebook.react.bridge.ReactApplicationContext
++import com.facebook.react.uimanager.ViewManager
++import com.facebook.react.bridge.NativeModule
++import com.mrousavy.camera.frameprocessors.FrameProcessorPluginRegistry
++
++class VisionCameraTextRecognitionPackage : ReactPackage {
++    companion object {
++        init {
++            FrameProcessorPluginRegistry.addFrameProcessorPlugin("scanText") { proxy, options ->
++                VisionCameraTextRecognitionPlugin(proxy, options)
++            }
++            FrameProcessorPluginRegistry.addFrameProcessorPlugin("translate") { proxy, options ->
++                VisionCameraTranslatorPlugin(proxy, options)
++            }
++        }
++    }
++
++    override fun createViewManagers(reactContext: ReactApplicationContext): List<ViewManager<*, *>> {
++        return emptyList()
++    }
++
++    override fun createNativeModules(reactContext: ReactApplicationContext): List<NativeModule> {
++            return listOf(
++                 RemoveLanguageModel(reactContext),
++                 PhotoRecognizerModule(reactContext)
++             )
++    }
++}
++
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt
+new file mode 100644
+index 0000000..f48c947
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt
+@@ -0,0 +1,138 @@
++package com.visioncameratextrecognition
++
++import android.graphics.Point
++import android.graphics.Rect
++import android.media.Image
++import com.facebook.react.bridge.WritableNativeArray
++import com.facebook.react.bridge.WritableNativeMap
++import com.google.android.gms.tasks.Task
++import com.google.android.gms.tasks.Tasks
++import com.google.mlkit.vision.common.InputImage
++import com.google.mlkit.vision.text.Text
++import com.google.mlkit.vision.text.TextRecognition
++import com.google.mlkit.vision.text.chinese.ChineseTextRecognizerOptions
++import com.google.mlkit.vision.text.devanagari.DevanagariTextRecognizerOptions
++import com.google.mlkit.vision.text.japanese.JapaneseTextRecognizerOptions
++import com.google.mlkit.vision.text.korean.KoreanTextRecognizerOptions
++import com.google.mlkit.vision.text.latin.TextRecognizerOptions
++import com.mrousavy.camera.frameprocessors.Frame
++import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
++import com.mrousavy.camera.frameprocessors.VisionCameraProxy
++import java.util.HashMap
++
++class VisionCameraTextRecognitionPlugin(proxy: VisionCameraProxy, options: Map<String, Any>?) :
++    FrameProcessorPlugin() {
++
++    private var recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
++    private val latinOptions = TextRecognizerOptions.DEFAULT_OPTIONS
++    private val chineseOptions = ChineseTextRecognizerOptions.Builder().build()
++    private val devanagariOptions = DevanagariTextRecognizerOptions.Builder().build()
++    private val japaneseOptions = JapaneseTextRecognizerOptions.Builder().build()
++    private val koreanOptions = KoreanTextRecognizerOptions.Builder().build()
++
++    init {
++        val language = options?.get("language").toString()
++        recognizer = when (language) {
++            "latin" -> TextRecognition.getClient(latinOptions)
++            "chinese" -> TextRecognition.getClient(chineseOptions)
++            "devanagari" -> TextRecognition.getClient(devanagariOptions)
++            "japanese" -> TextRecognition.getClient(japaneseOptions)
++            "korean" -> TextRecognition.getClient(koreanOptions)
++            else -> TextRecognition.getClient(latinOptions)
++        }
++    }
++
++    override fun callback(frame: Frame, arguments: Map<String, Any>?): HashMap<String, Any>? {
++        val data = WritableNativeMap()
++        val mediaImage: Image = frame.image
++        val image =
++            InputImage.fromMediaImage(mediaImage, frame.imageProxy.imageInfo.rotationDegrees)
++        val task: Task<Text> = recognizer.process(image)
++        try {
++            val text: Text = Tasks.await(task)
++            if (text.text.isEmpty()) {
++                return WritableNativeMap().toHashMap()
++            }
++            data.putString("resultText", text.text)
++            data.putArray("blocks", getBlocks(text.textBlocks))
++            return data.toHashMap()
++        } catch (e: Exception) {
++            e.printStackTrace()
++            return null
++        }
++    }
++
++    companion object {
++        fun getBlocks(blocks: MutableList<Text.TextBlock>): WritableNativeArray {
++            val blockArray = WritableNativeArray()
++            blocks.forEach { block ->
++                val blockMap = WritableNativeMap().apply {
++                    putString("blockText", block.text)
++                    putArray("blockCornerPoints", block.cornerPoints?.let { getCornerPoints(it) })
++                    putMap("blockFrame", getFrame(block.boundingBox))
++                    putArray("lines", getLines(block.lines))
++                }
++                blockArray.pushMap(blockMap)
++            }
++            return blockArray
++        }
++
++        private fun getLines(lines: MutableList<Text.Line>): WritableNativeArray {
++            val lineArray = WritableNativeArray()
++            lines.forEach { line ->
++                val lineMap = WritableNativeMap().apply {
++                    putString("lineText", line.text)
++                    putArray("lineCornerPoints", line.cornerPoints?.let { getCornerPoints(it) })
++                    putMap("lineFrame", getFrame(line.boundingBox))
++                    putArray(
++                        "lineLanguages",
++                        WritableNativeArray().apply { pushString(line.recognizedLanguage) })
++                    putArray("elements", getElements(line.elements))
++                }
++                lineArray.pushMap(lineMap)
++            }
++            return lineArray
++        }
++
++        private fun getElements(elements: MutableList<Text.Element>): WritableNativeArray {
++            val elementArray = WritableNativeArray()
++            elements.forEach { element ->
++                val elementMap = WritableNativeMap().apply {
++                    putString("elementText", element.text)
++                    putArray(
++                        "elementCornerPoints",
++                        element.cornerPoints?.let { getCornerPoints(it) })
++                    putMap("elementFrame", getFrame(element.boundingBox))
++                }
++                elementArray.pushMap(elementMap)
++            }
++            return elementArray
++        }
++
++        private fun getCornerPoints(points: Array<Point>): WritableNativeArray {
++            val cornerPoints = WritableNativeArray()
++            points.forEach { point ->
++                cornerPoints.pushMap(WritableNativeMap().apply {
++                    putInt("x", point.x)
++                    putInt("y", point.y)
++                })
++            }
++            return cornerPoints
++        }
++
++        private fun getFrame(boundingBox: Rect?): WritableNativeMap {
++            return WritableNativeMap().apply {
++                boundingBox?.let {
++                    putDouble("x", it.exactCenterX().toDouble())
++                    putDouble("y", it.exactCenterY().toDouble())
++                    putInt("width", it.width())
++                    putInt("height", it.height())
++                    putInt("boundingCenterX", it.centerX())
++                    putInt("boundingCenterY", it.centerY())
++                }
++            }
++        }
++    }
++}
++
++
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTranslatorPlugin.kt b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTranslatorPlugin.kt
+new file mode 100644
+index 0000000..fc3ba25
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/bin/src/main/java/com/visioncameratextrecognition/VisionCameraTranslatorPlugin.kt
+@@ -0,0 +1,111 @@
++package com.visioncameratextrecognition
++
++import android.media.Image
++import android.util.Log
++import com.google.android.gms.tasks.Task
++import com.google.android.gms.tasks.Tasks
++import com.google.mlkit.common.model.DownloadConditions
++import com.google.mlkit.common.model.RemoteModelManager
++import com.google.mlkit.nl.translate.TranslateLanguage
++import com.google.mlkit.nl.translate.TranslateRemoteModel
++import com.google.mlkit.nl.translate.Translation
++import com.google.mlkit.nl.translate.TranslatorOptions
++import com.google.mlkit.vision.common.InputImage
++import com.google.mlkit.vision.text.Text
++import com.google.mlkit.vision.text.TextRecognition
++import com.google.mlkit.vision.text.latin.TextRecognizerOptions
++import com.mrousavy.camera.frameprocessors.Frame
++import com.mrousavy.camera.frameprocessors.FrameProcessorPlugin
++import com.mrousavy.camera.frameprocessors.VisionCameraProxy
++
++private const val TAG = "VisionCameraTranslator"
++
++class VisionCameraTranslatorPlugin(proxy: VisionCameraProxy, options: Map<String, Any>?) :
++    FrameProcessorPlugin() {
++
++    private val conditions = DownloadConditions.Builder().requireWifi().build()
++    private var translatorOptions = TranslatorOptions.Builder()
++        .setSourceLanguage(TranslateLanguage.ENGLISH)
++        .setTargetLanguage(TranslateLanguage.GERMAN)
++        .build()
++    private val translator = Translation.getClient(translatorOptions)
++    private var recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
++    private var from = ""
++    private var to = ""
++    private var models = emptyArray<String>()
++    private var isDownloaded: Boolean = false
++    private val modelManager = RemoteModelManager.getInstance()
++    private var translatedText = ""
++    init {
++        this.from = options?.get("from") as? String ?: ""
++        this.to = options?.get("to") as? String ?: ""
++        val sourceLanguage = translateLanguage(from)
++        val targetLanguage = translateLanguage(to)
++        if (sourceLanguage != null && targetLanguage != null) {
++            translatorOptions = TranslatorOptions.Builder()
++                .setSourceLanguage(sourceLanguage)
++                .setTargetLanguage(targetLanguage)
++                .build()
++        } else {
++            println("Invalid language strings provided for translation.")
++        }
++        downloadModel()
++    }
++
++    override fun callback(frame: Frame, params: MutableMap<String, Any>?) : Any? {
++        val mediaImage: Image = frame.image
++        println(" OKKK ${ frame.imageProxy.imageInfo.rotationDegrees }")
++        val image = InputImage.fromMediaImage(mediaImage, frame.imageProxy.imageInfo.rotationDegrees)
++        val task: Task<Text> = recognizer.process(image)
++        try {
++            val resultText: String = Tasks.await(task).text
++            if (this.isDownloaded && resultText.isNotEmpty()) {
++                this.translateText(resultText)
++            }
++            if (resultText.isEmpty()){
++                this.translatedText = ""
++            }
++            return this.translatedText
++        }catch (e:Exception){
++            Log.e(TAG, "$e")
++            return null
++        }
++    }
++
++    private fun translateText(text: String) {
++        translator.translate(text)
++            .addOnSuccessListener {
++                this.translatedText = it
++            }
++            .addOnFailureListener {
++                Log.e("ERROR", "$it")
++                this.translatedText = ""
++            }
++    }
++
++
++    private fun downloadModel(){
++        modelManager.getDownloadedModels(TranslateRemoteModel::class.java)
++            .addOnSuccessListener {
++                it.forEach() { language ->
++                    models.plus(language.language)
++                }
++                if (models.contains(from) && models.contains(to)) {
++                    isDownloaded = true
++                }
++            }
++            .addOnFailureListener {
++                this.isDownloaded = false
++            }
++
++        if (!isDownloaded){
++            translator.downloadModelIfNeeded(conditions)
++                .addOnSuccessListener {
++                    this.isDownloaded = true
++                }
++                .addOnFailureListener {
++                    this.isDownloaded = false
++                }
++        }
++    }
++}
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/buildConfig/debug/com/visioncameratextrecognition/BuildConfig.java b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/buildConfig/debug/com/visioncameratextrecognition/BuildConfig.java
+new file mode 100644
+index 0000000..24ee306
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/buildConfig/debug/com/visioncameratextrecognition/BuildConfig.java
+@@ -0,0 +1,10 @@
++/**
++ * Automatically generated file. DO NOT MODIFY
++ */
++package com.visioncameratextrecognition;
++
++public final class BuildConfig {
++  public static final boolean DEBUG = Boolean.parseBoolean("true");
++  public static final String LIBRARY_PACKAGE_NAME = "com.visioncameratextrecognition";
++  public static final String BUILD_TYPE = "debug";
++}
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/CMakeLists.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/CMakeLists.txt
+new file mode 100644
+index 0000000..767ac18
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/CMakeLists.txt
+@@ -0,0 +1,36 @@
++# Copyright (c) Meta Platforms, Inc. and affiliates.
++#
++# This source code is licensed under the MIT license found in the
++# LICENSE file in the root directory of this source tree.
++
++cmake_minimum_required(VERSION 3.13)
++set(CMAKE_VERBOSE_MAKEFILE on)
++
++file(GLOB react_codegen_SRCS CONFIGURE_DEPENDS *.cpp react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/*.cpp)
++
++add_library(
++  react_codegen_ReactNativeVisionCameraTextRecognitionSpec
++  OBJECT
++  ${react_codegen_SRCS}
++)
++
++target_include_directories(react_codegen_ReactNativeVisionCameraTextRecognitionSpec PUBLIC . react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec)
++
++target_link_libraries(
++  react_codegen_ReactNativeVisionCameraTextRecognitionSpec
++  fbjni
++  jsi
++  # We need to link different libraries based on whether we are building rncore or not, that's necessary
++  # because we want to break a circular dependency between react_codegen_rncore and reactnative
++  reactnative
++)
++
++target_compile_options(
++  react_codegen_ReactNativeVisionCameraTextRecognitionSpec
++  PRIVATE
++  -DLOG_TAG=\"ReactNative\"
++  -fexceptions
++  -frtti
++  -std=c++20
++  -Wall
++)
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/ReactNativeVisionCameraTextRecognitionSpec-generated.cpp b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/ReactNativeVisionCameraTextRecognitionSpec-generated.cpp
+new file mode 100644
+index 0000000..8b145ac
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/ReactNativeVisionCameraTextRecognitionSpec-generated.cpp
+@@ -0,0 +1,22 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJniCpp.js
++ */
++
++#include "ReactNativeVisionCameraTextRecognitionSpec.h"
++
++namespace facebook::react {
++
++
++
++std::shared_ptr<TurboModule> ReactNativeVisionCameraTextRecognitionSpec_ModuleProvider(const std::string &moduleName, const JavaTurboModule::InitParams &params) {
++
++  return nullptr;
++}
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/ReactNativeVisionCameraTextRecognitionSpec.h b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/ReactNativeVisionCameraTextRecognitionSpec.h
+new file mode 100644
+index 0000000..395fb0c
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/ReactNativeVisionCameraTextRecognitionSpec.h
+@@ -0,0 +1,24 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleJniH.js
++ */
++
++#pragma once
++
++#include <ReactCommon/JavaTurboModule.h>
++#include <ReactCommon/TurboModule.h>
++#include <jsi/jsi.h>
++
++namespace facebook::react {
++
++
++
++JSI_EXPORT
++std::shared_ptr<TurboModule> ReactNativeVisionCameraTextRecognitionSpec_ModuleProvider(const std::string &moduleName, const JavaTurboModule::InitParams &params);
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ComponentDescriptors.cpp b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ComponentDescriptors.cpp
+new file mode 100644
+index 0000000..8a7f06a
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ComponentDescriptors.cpp
+@@ -0,0 +1,22 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateComponentDescriptorCpp.js
++ */
++
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ComponentDescriptors.h>
++#include <react/renderer/core/ConcreteComponentDescriptor.h>
++#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
++
++namespace facebook::react {
++
++void ReactNativeVisionCameraTextRecognitionSpec_registerComponentDescriptorsFromCodegen(
++  std::shared_ptr<const ComponentDescriptorProviderRegistry> registry) {
++
++}
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ComponentDescriptors.h b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ComponentDescriptors.h
+new file mode 100644
+index 0000000..765f8c0
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ComponentDescriptors.h
+@@ -0,0 +1,24 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateComponentDescriptorH.js
++ */
++
++#pragma once
++
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.h>
++#include <react/renderer/core/ConcreteComponentDescriptor.h>
++#include <react/renderer/componentregistry/ComponentDescriptorProviderRegistry.h>
++
++namespace facebook::react {
++
++
++
++void ReactNativeVisionCameraTextRecognitionSpec_registerComponentDescriptorsFromCodegen(
++  std::shared_ptr<const ComponentDescriptorProviderRegistry> registry);
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.cpp b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.cpp
+new file mode 100644
+index 0000000..f83c444
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.cpp
+@@ -0,0 +1,16 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateEventEmitterCpp.js
++ */
++
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.h>
++
++
++namespace facebook::react {
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.h b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.h
+new file mode 100644
+index 0000000..2845a63
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.h
+@@ -0,0 +1,17 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateEventEmitterH.js
++ */
++#pragma once
++
++#include <react/renderer/components/view/ViewEventEmitter.h>
++
++
++namespace facebook::react {
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.cpp b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.cpp
+new file mode 100644
+index 0000000..d583758
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.cpp
+@@ -0,0 +1,19 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GeneratePropsCpp.js
++ */
++
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.h>
++#include <react/renderer/core/PropsParserContext.h>
++#include <react/renderer/core/propsConversions.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.h b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.h
+new file mode 100644
+index 0000000..870864b
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.h
+@@ -0,0 +1,18 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GeneratePropsH.js
++ */
++#pragma once
++
++
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ReactNativeVisionCameraTextRecognitionSpecJSI-generated.cpp b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ReactNativeVisionCameraTextRecognitionSpecJSI-generated.cpp
+new file mode 100644
+index 0000000..958b1de
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ReactNativeVisionCameraTextRecognitionSpecJSI-generated.cpp
+@@ -0,0 +1,17 @@
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleCpp.js
++ */
++
++#include "ReactNativeVisionCameraTextRecognitionSpecJSI.h"
++
++namespace facebook::react {
++
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ReactNativeVisionCameraTextRecognitionSpecJSI.h b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ReactNativeVisionCameraTextRecognitionSpecJSI.h
+new file mode 100644
+index 0000000..ec16260
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ReactNativeVisionCameraTextRecognitionSpecJSI.h
+@@ -0,0 +1,19 @@
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateModuleH.js
++ */
++
++#pragma once
++
++#include <ReactCommon/TurboModule.h>
++#include <react/bridging/Bridging.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.cpp b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.cpp
+new file mode 100644
+index 0000000..5adea47
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.cpp
+@@ -0,0 +1,17 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateShadowNodeCpp.js
++ */
++
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.h b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.h
+new file mode 100644
+index 0000000..5aa3b5b
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/ShadowNodes.h
+@@ -0,0 +1,23 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateShadowNodeH.js
++ */
++
++#pragma once
++
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/EventEmitters.h>
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/Props.h>
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.h>
++#include <react/renderer/components/view/ConcreteViewShadowNode.h>
++#include <jsi/jsi.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.cpp b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.cpp
+new file mode 100644
+index 0000000..c2bd23b
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.cpp
+@@ -0,0 +1,16 @@
++
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateStateCpp.js
++ */
++#include <react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.h>
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.h b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.h
+new file mode 100644
+index 0000000..c011ed8
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/jni/react/renderer/components/ReactNativeVisionCameraTextRecognitionSpec/States.h
+@@ -0,0 +1,19 @@
++/**
++ * This code was generated by [react-native-codegen](https://www.npmjs.com/package/react-native-codegen).
++ *
++ * Do not edit this file as changes may cause incorrect behavior and will be lost
++ * once the code is regenerated.
++ *
++ * @generated by codegen project: GenerateStateH.js
++ */
++#pragma once
++
++#ifdef ANDROID
++#include <folly/dynamic.h>
++#endif
++
++namespace facebook::react {
++
++
++
++} // namespace facebook::react
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/schema.json b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/schema.json
+new file mode 100644
+index 0000000..43967f8
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/generated/source/codegen/schema.json
+@@ -0,0 +1 @@
++{"modules":{}}
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+new file mode 100644
+index 0000000..8c522b7
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.visioncameratextrecognition" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+new file mode 100644
+index 0000000..be54e9b
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aapt_friendly_merged_manifests/debug/processDebugManifest/aapt/output-metadata.json
+@@ -0,0 +1,18 @@
++{
++  "version": 3,
++  "artifactType": {
++    "type": "AAPT_FRIENDLY_MERGED_MANIFESTS",
++    "kind": "Directory"
++  },
++  "applicationId": "com.visioncameratextrecognition",
++  "variantName": "debug",
++  "elements": [
++    {
++      "type": "SINGLE",
++      "filters": [],
++      "attributes": [],
++      "outputFile": "AndroidManifest.xml"
++    }
++  ],
++  "elementType": "File"
++}
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+new file mode 100644
+index 0000000..1211b1e
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/aar_metadata/debug/writeDebugAarMetadata/aar-metadata.properties
+@@ -0,0 +1,6 @@
++aarFormatVersion=1.0
++aarMetadataVersion=1.0
++minCompileSdk=1
++minCompileSdkExtension=0
++minAndroidGradlePluginVersion=1.0.0
++coreLibraryDesugaringEnabled=false
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+new file mode 100644
+index 0000000..9e26dfe
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/annotation_processor_list/debug/javaPreCompileDebug/annotationProcessors.json
+@@ -0,0 +1 @@
++{}
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar
+new file mode 100644
+index 0000000..aba0300
+Binary files /dev/null and b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/compile_r_class_jar/debug/generateDebugRFile/R.jar differ
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/compile_symbol_list/debug/generateDebugRFile/R.txt
+new file mode 100644
+index 0000000..e69de29
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+new file mode 100644
+index 0000000..7d9d0e8
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/compile-file-map.properties
+@@ -0,0 +1 @@
++#Fri Aug 15 00:17:12 BRT 2025
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+new file mode 100644
+index 0000000..b614730
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/debug/packageDebugResources/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="main" generated-set="main$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="debug" generated-set="debug$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/debug/res"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated$Generated" generated="true" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/build/generated/res/resValues/debug"/></dataSet><dataSet aapt-namespace="http://schemas.android.com/apk/res-auto" config="generated" generated-set="generated$Generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/build/generated/res/resValues/debug"/></dataSet><mergedItems/></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/mergeDebugAssets/merger.xml b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+new file mode 100644
+index 0000000..743df99
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/mergeDebugAssets/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/assets"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/debug/assets"/></dataSet><dataSet config="generated" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/shader_assets/debug/compileDebugShaders/out"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/mergeDebugShaders/merger.xml b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+new file mode 100644
+index 0000000..a83d8eb
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/incremental/mergeDebugShaders/merger.xml
+@@ -0,0 +1,2 @@
++<?xml version="1.0" encoding="utf-8"?>
++<merger version="3"><dataSet config="main" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/shaders"/></dataSet><dataSet config="debug" ignore_pattern="!.svn:!.git:!.ds_store:!*.scc:.*:&lt;dir>_*:!CVS:!thumbs.db:!picasa.ini:!*~"><source path="/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/debug/shaders"/></dataSet></merger>
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+new file mode 100644
+index 0000000..78ac5b8
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/local_only_symbol_list/debug/parseDebugLocalResources/R-def.txt
+@@ -0,0 +1,2 @@
++R_DEF: Internal format may change without notice
++local
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+new file mode 100644
+index 0000000..a8b3494
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/manifest_merge_blame_file/debug/processDebugManifest/manifest-merger-blame-debug-report.txt
+@@ -0,0 +1,7 @@
++1<?xml version="1.0" encoding="utf-8"?>
++2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++3    package="com.visioncameratextrecognition" >
++4
++5    <uses-sdk android:minSdkVersion="24" />
++6
++7</manifest>
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+new file mode 100644
+index 0000000..8c522b7
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/merged_manifest/debug/processDebugManifest/AndroidManifest.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<manifest xmlns:android="http://schemas.android.com/apk/res/android"
++    package="com.visioncameratextrecognition" >
++
++    <uses-sdk android:minSdkVersion="24" />
++
++</manifest>
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+new file mode 100644
+index 0000000..0637a08
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/navigation_json/debug/extractDeepLinksDebug/navigation.json
+@@ -0,0 +1 @@
++[]
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+new file mode 100644
+index 0000000..08f4ebe
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/nested_resources_validation_report/debug/generateDebugResources/nestedResourcesValidationReport.txt
+@@ -0,0 +1 @@
++0 Warning/Error
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+new file mode 100644
+index 0000000..ceca5d8
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/intermediates/symbol_list_with_package_name/debug/generateDebugRFile/package-aware-r.txt
+@@ -0,0 +1 @@
++com.visioncameratextrecognition
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/kotlin/compileDebugKotlin/cacheable/dirty-sources.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/kotlin/compileDebugKotlin/cacheable/dirty-sources.txt
+new file mode 100644
+index 0000000..d2b1820
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/kotlin/compileDebugKotlin/cacheable/dirty-sources.txt
+@@ -0,0 +1,6 @@
++/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt
++/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/PhotoRecognizerModule.kt
++/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPackage.kt
++/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/VisionCameraTranslatorPlugin.kt
++/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/TranslateLanguageEnum.kt
++/home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/RemoveLanguageModel.kt
+\ No newline at end of file
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/kotlin/compileDebugKotlin/local-state/build-history.bin b/node_modules/react-native-vision-camera-text-recognition/android/build/kotlin/compileDebugKotlin/local-state/build-history.bin
+new file mode 100644
+index 0000000..7b5b681
+Binary files /dev/null and b/node_modules/react-native-vision-camera-text-recognition/android/build/kotlin/compileDebugKotlin/local-state/build-history.bin differ
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/build/outputs/logs/manifest-merger-debug-report.txt b/node_modules/react-native-vision-camera-text-recognition/android/build/outputs/logs/manifest-merger-debug-report.txt
+new file mode 100644
+index 0000000..a6bbe6d
+--- /dev/null
++++ b/node_modules/react-native-vision-camera-text-recognition/android/build/outputs/logs/manifest-merger-debug-report.txt
+@@ -0,0 +1,16 @@
++-- Merging decision tree log ---
++manifest
++ADDED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml:1:1-2:12
++INJECTED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml:1:1-2:12
++	package
++		INJECTED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml
++	xmlns:android
++		ADDED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml:1:11-69
++uses-sdk
++INJECTED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml reason: use-sdk injection requested
++INJECTED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml
++INJECTED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml
++	android:targetSdkVersion
++		INJECTED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml
++	android:minSdkVersion
++		INJECTED from /home/userterras/Documents/testLibMlkit/node_modules/react-native-vision-camera-text-recognition/android/src/main/AndroidManifestNew.xml
+diff --git a/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt b/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt
+index f48c947..3ef2d32 100644
+--- a/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt
++++ b/node_modules/react-native-vision-camera-text-recognition/android/src/main/java/com/visioncameratextrecognition/VisionCameraTextRecognitionPlugin.kt
+@@ -43,22 +43,28 @@ class VisionCameraTextRecognitionPlugin(proxy: VisionCameraProxy, options: Map<S
+     }
+ 
+     override fun callback(frame: Frame, arguments: Map<String, Any>?): HashMap<String, Any>? {
+-        val data = WritableNativeMap()
+         val mediaImage: Image = frame.image
+-        val image =
+-            InputImage.fromMediaImage(mediaImage, frame.imageProxy.imageInfo.rotationDegrees)
++        val image = InputImage.fromMediaImage(mediaImage, frame.imageProxy.imageInfo.rotationDegrees)
+         val task: Task<Text> = recognizer.process(image)
+-        try {
++        return try {
+             val text: Text = Tasks.await(task)
+             if (text.text.isEmpty()) {
+-                return WritableNativeMap().toHashMap()
++                return HashMap()
+             }
+-            data.putString("resultText", text.text)
+-            data.putArray("blocks", getBlocks(text.textBlocks))
+-            return data.toHashMap()
++
++            val data = WritableNativeMap().apply {
++                putString("resultText", text.text)
++                putArray("blocks", getBlocks(text.textBlocks))
++            }
++
++            val out = HashMap<String, Any>()
++            for ((k, v) in data.toHashMap()) {
++                if (v != null) out[k] = v
++            }
++            out
+         } catch (e: Exception) {
+             e.printStackTrace()
+-            return null
++            null
+         }
+     }
+ 
